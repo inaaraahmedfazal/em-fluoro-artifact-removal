@@ -1,0 +1,9 @@
+NDI:
+python train.py --dataset rain800 --checkpoint_dir checkpoints --vis_dir val_out --max_num_epochs 200 --batch_size 2 --enable_d1d2 --enable_d3 --enable_synfake --net_G unet_512 --pixel_loss pixel_loss --metric psnr_gt1
+
+ test:
+python eval_derain.py --dataset rain800 --ckptdir checkpoints --net_G unet_512 --in_size 512 --save_output
+
+
+highlight:
+python train.py --dataset rain800 --checkpoint_dir checkpoints1 --vis_dir val_out1 --max_num_epochs 200 --batch_size 10 --enable_d1d2 --enable_d3 --enable_synfake --net_G unet_512 --pixel_loss pixel_loss --metric psnr_gt1
