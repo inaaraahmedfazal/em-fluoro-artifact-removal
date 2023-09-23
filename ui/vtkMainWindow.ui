@@ -228,9 +228,12 @@
             </widget>
            </item>
            <item row="17" column="0" colspan="2">
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="trackerToggle">
              <property name="text">
               <string>Start/Stop Tracking</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
              </property>
             </widget>
            </item>

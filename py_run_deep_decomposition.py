@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import csv
 import matlab.engine
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from sksurgerynditracker.nditracker import NDITracker
 
 POSITIONER_PRIMARY_ANGLE_INCREMENT = 1
 POSITIONER_SECONDARY_ANGLE_INCREMENT = 1
@@ -23,6 +24,8 @@ THRESHOLD_VALUE_2 = 0.25
 REORDER_INDEX = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10]
 
 FRAME_INTERVAL_MS = 5000
+NUM_PORTS = 1
+SPHERE_RADIUS = 5
 
 class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
@@ -44,11 +47,23 @@ class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.vtkGridLayout.addWidget(self.qvtkwin, 0, 0)
         self.updateTimer = QtCore.QTimer()
 
+        # Tracker setup
+        self.tracker = None
+        self.isTrackerInitialized = False
+        self.trackerSettings = {
+            "tracker type": "aurora",
+            "ports to probe": NUM_PORTS,
+            "verbose": True
+        }
+        self.trackedTipSource = vtk.vtkSphereSource()
+        self.trackedTipActor = vtk.vtkActor()
+        self.trackedTipMapper = vtk.vtkPolyDataMapper()
+        self.trackedTipTransform = vtk.vtkTransform()
+
         self.centers_original_ref = np.zeros((12, 2))
         self.fiducialWorldPts = []
         self.intCalMat = np.eye(3)
         self.trackerCTRegMat = np.eye(4)
-        
 
         # Transformation from CT to tracker (loaded as CSV)
         self.trackerCTRegTransform = vtk.vtkTransform()
@@ -76,6 +91,12 @@ class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.fluoroCubeSource.SetYLength(100)
         self.fluoroCubeSource.SetZLength(100)
 
+        self.trackedTipTransform.Identity()
+        self.trackedTipSource.SetCenter(0, 0, 0)
+        self.trackedTipSource.SetRadius(SPHERE_RADIUS)
+        self.trackedTipMapper.SetInputConnection(self.trackedTipSource.GetOutputPort())
+        self.trackedTipActor.SetMapper(self.trackedTipMapper)
+
         # Initialize all transforms to identity
         self.trackerCTRegTransform.Identity()
         self.fluoroCTRegTransform.Identity()
@@ -98,7 +119,8 @@ class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.browseTrackerCTRegButton.clicked.connect(self.browseTrackerCTReg)
         self.browseSimDicomButton.clicked.connect(self.browseSimDicom)
         self.browseRefCentroidsButton.clicked.connect(self.browseRefCentroids)
-
+        
+        self.trackerToggle.toggled.connect(self.startTracker)
         self.streamToggle.toggled.connect(self.handleStreamToggle)
         self.confirmParametersButton.clicked.connect(self.confirmParameters)
         self.runCarmCalButton.clicked.connect(self.runCarmCal)
@@ -141,6 +163,35 @@ class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
         outfile_fiducials, outfile_removed = self.eval.run_eval(self.imageField.text())
         self.postImageLabel.setPixmap(QtGui.QPixmap(outfile_removed))
         #self.getCarmPose()
+
+    def startTracker(self):
+        """ Starts NDI Aurora (magnetic) or Polaris (optical) tracker and sets up VTK tracked objects"""
+        if self.trackerToggle.isChecked():
+            if not self.isTrackerInitialized:
+                try:
+                    self.tracker = NDITracker(self.trackerSettings)
+                    self.isTrackerInitialized = True
+                    self.tracker.use_quaternions = False
+                    
+                except:
+                    print("Unable to connect to NDI Tracked device")
+                    self.isTrackerInitialized = False
+                    self.trackerToggle.setChecked(False)
+            if self.isTrackerInitialized:
+                self.tracker.start_tracking()
+                self.trackedTipActor.SetUserTransform(self.trackedTipTransform)
+                self.ren.AddActor(self.trackedTipActor)
+                self.qvtkwin.GetRenderWindow().Render()
+
+        else:
+            if self.isTrackerInitialized:
+                self.tracker.stop_tracking()
+                self.ren.RemoveActor(self.trackedTipActor)
+                self.qvtkwin.GetRenderWindow().Render()
+                print("Tracking Stopped")
+
+                    
+                    
 
     def runSimNoRemoval(self):
         # Takes in a DICOM file and calculates the C-arm pose for every frame, then creates visualization
@@ -362,6 +413,11 @@ class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
     def updateScene(self):
         # Full workflow (streaming, artifact removal, pose calculation)
         if self.isStreaming:
+            if self.isTrackerInitialized:
+                port_handles, time_stamps, frame_numbers, tracking, tracking_quality = self.tracker.get_frame()
+                self.trackedTipTransform.SetMatrix(np.reshape(tracking[0], 16))
+                self.trackedTipTransform.Update()
+
             # Read frame
             _, img_pre = self.fluoroStream.read()
             img_pre = cv2.cvtColor(img_pre, cv2.COLOR_BGR2RGB)
