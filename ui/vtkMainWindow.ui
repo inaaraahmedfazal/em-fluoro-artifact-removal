@@ -193,49 +193,15 @@
            <enum>QFrame::Plain</enum>
           </property>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="8" column="0">
-            <widget class="QLineEdit" name="trackerCTRegFileField"/>
-           </item>
-           <item row="2" column="0" colspan="2">
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Load Metal Fiducial Points (from CT)</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLineEdit" name="intCalFileField"/>
-           </item>
-           <item row="16" column="0">
-            <widget class="QLabel" name="label_13">
-             <property name="text">
-              <string>Magnetic Tracking</string>
-             </property>
-            </widget>
-           </item>
-           <item row="15" column="0" colspan="2">
-            <widget class="Line" name="line_2">
+           <item row="12" column="0" colspan="2">
+            <widget class="Line" name="line">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QToolButton" name="browseFiducialFileButton">
-             <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="17" column="0" colspan="2">
-            <widget class="QPushButton" name="trackerToggle">
-             <property name="text">
-              <string>Start/Stop Tracking</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
+           <item row="8" column="0">
+            <widget class="QLineEdit" name="trackerCTRegFileField"/>
            </item>
            <item row="13" column="0">
             <widget class="QLabel" name="label_7">
@@ -244,41 +210,10 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="1">
-            <widget class="QToolButton" name="browseIntCalButton">
+           <item row="16" column="0">
+            <widget class="QLabel" name="label_13">
              <property name="text">
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0" colspan="2">
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>Load CT/Tracking Registration</string>
-             </property>
-            </widget>
-           </item>
-           <item row="12" column="0" colspan="2">
-            <widget class="Line" name="line">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLineEdit" name="fiducialFileField"/>
-           </item>
-           <item row="11" column="0" colspan="2">
-            <widget class="QPushButton" name="confirmParametersButton">
-             <property name="text">
-              <string>Confirm</string>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="1">
-            <widget class="QToolButton" name="browseTrackerCTRegButton">
-             <property name="text">
-              <string>...</string>
+              <string>Magnetic Tracking</string>
              </property>
             </widget>
            </item>
@@ -286,6 +221,19 @@
             <widget class="QLabel" name="label_2">
              <property name="text">
               <string>Load Fluoro Intrinsic Matrix</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLineEdit" name="intCalFileField"/>
+           </item>
+           <item row="17" column="0" colspan="2">
+            <widget class="QPushButton" name="trackerToggle">
+             <property name="text">
+              <string>Start/Stop Tracking</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -299,8 +247,60 @@
              </property>
             </widget>
            </item>
+           <item row="11" column="0" colspan="2">
+            <widget class="QPushButton" name="confirmParametersButton">
+             <property name="text">
+              <string>Confirm</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" colspan="2">
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Load Metal Fiducial Points (from CT)</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0" colspan="2">
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>Load CT/Tracking Registration</string>
+             </property>
+            </widget>
+           </item>
            <item row="10" column="0">
             <widget class="QLineEdit" name="refCentroidsField"/>
+           </item>
+           <item row="9" column="0" colspan="2">
+            <widget class="QLabel" name="label_15">
+             <property name="text">
+              <string>Load Reference Centroids</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QToolButton" name="browseTrackerCTRegButton">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLineEdit" name="fiducialFileField"/>
+           </item>
+           <item row="3" column="1">
+            <widget class="QToolButton" name="browseFiducialFileButton">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="15" column="0" colspan="2">
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
            </item>
            <item row="10" column="1">
             <widget class="QToolButton" name="browseRefCentroidsButton">
@@ -309,11 +309,81 @@
              </property>
             </widget>
            </item>
-           <item row="9" column="0" colspan="2">
-            <widget class="QLabel" name="label_15">
+           <item row="6" column="1">
+            <widget class="QToolButton" name="browseIntCalButton">
              <property name="text">
-              <string>Load Reference Centroids</string>
+              <string>...</string>
              </property>
+            </widget>
+           </item>
+           <item row="18" column="0" colspan="2">
+            <widget class="QFrame" name="frame_3">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_4">
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_12">
+                <property name="text">
+                 <string>Ty</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_14">
+                <property name="text">
+                 <string>Tz</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLCDNumber" name="ToolTyLCD">
+                <property name="frameShadow">
+                 <enum>QFrame::Plain</enum>
+                </property>
+                <property name="segmentStyle">
+                 <enum>QLCDNumber::Flat</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLCDNumber" name="ToolTzLCD">
+                <property name="frameShadow">
+                 <enum>QFrame::Plain</enum>
+                </property>
+                <property name="segmentStyle">
+                 <enum>QLCDNumber::Flat</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLCDNumber" name="ToolTxLCD">
+                <property name="frameShadow">
+                 <enum>QFrame::Plain</enum>
+                </property>
+                <property name="segmentStyle">
+                 <enum>QLCDNumber::Flat</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Tx</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" colspan="2">
+               <widget class="QLabel" name="label_10">
+                <property name="text">
+                 <string>Tracker Pose</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
@@ -369,76 +439,6 @@
             <widget class="QPushButton" name="runSimButton">
              <property name="text">
               <string>Run Simulation</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QFrame" name="frame_3">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_4">
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_12">
-             <property name="text">
-              <string>Ty</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_14">
-             <property name="text">
-              <string>Tz</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLCDNumber" name="CarmTyLCD">
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="segmentStyle">
-              <enum>QLCDNumber::Flat</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QLCDNumber" name="CarmTzLCD">
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="segmentStyle">
-              <enum>QLCDNumber::Flat</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLCDNumber" name="CarmTxLCD">
-             <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
-             </property>
-             <property name="segmentStyle">
-              <enum>QLCDNumber::Flat</enum>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_11">
-             <property name="text">
-              <string>Tx</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0" colspan="2">
-            <widget class="QLabel" name="label_10">
-             <property name="text">
-              <string>C-arm Pose</string>
              </property>
             </widget>
            </item>

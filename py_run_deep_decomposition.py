@@ -23,15 +23,17 @@ THRESHOLD_VALUE_1 = 0.3
 THRESHOLD_VALUE_2 = 0.25
 REORDER_INDEX = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 10]
 
-FRAME_INTERVAL_MS = 5000
-NUM_PORTS = 1
+FRAME_INTERVAL_MS = 1000
+
+# Might need to change this based on how many COM ports show up on in device manager
+NUM_PORTS = 2
 SPHERE_RADIUS = 5
 
 class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__()
-        ckptsdir = "C:/Users/iahmedf/Documents/DeepDecomposition/em-fluoro-reg/checkpoints"
-        self.outdir = "C:/Users/iahmedf/Documents/DeepDecomposition/em-fluoro-reg/image_files"
+        ckptsdir = "C:/Users/iahmedf/Documents/em-fluoro-artifact-removal/checkpoints"
+        self.outdir = "C:/Users/iahmedf/Documents/em-fluoro-artifact-removal/image_files"
         # os.mkdir(f"{self.outdir}/preprocessed")
         # os.mkdir(f"{self.outdir}/fiducials")
         # os.mkdir(f"{self.outdir}/removed")
@@ -83,6 +85,9 @@ class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.isStreaming = False
         self.fluoroFrameCtr = 0
         self.eng = matlab.engine.start_matlab()
+
+        self.updateTimer.timeout.connect(self.updateScene)
+        self.updateTimer.start(FRAME_INTERVAL_MS)
 
     def setupVtkObjects(self):
         """Initializes and connects VTK objects"""
@@ -185,12 +190,11 @@ class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
 
         else:
             if self.isTrackerInitialized:
+                self.isTrackerInitialized = False
                 self.tracker.stop_tracking()
                 self.ren.RemoveActor(self.trackedTipActor)
                 self.qvtkwin.GetRenderWindow().Render()
                 print("Tracking Stopped")
-
-                    
                     
 
     def runSimNoRemoval(self):
@@ -380,9 +384,9 @@ class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.fluoroCTRegTransform.SetMatrix(np.reshape(xfrmMat, 16))
         self.fluoroTransform.Update()
 
-        self.CarmTxLCD.display(xfrmMat[0, 3])
-        self.CarmTyLCD.display(xfrmMat[1, 3])
-        self.CarmTzLCD.display(xfrmMat[2, 3])
+        self.ToolTxLCD.display(xfrmMat[0, 3])
+        self.ToolTyLCD.display(xfrmMat[1, 3])
+        self.ToolTzLCD.display(xfrmMat[2, 3])
         return xfrmMat
     
     def updateScene_streamingtest(self):
@@ -411,13 +415,15 @@ class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
         self.qvtkwin.GetRenderWindow().Render()
     
     def updateScene(self):
+        if self.isTrackerInitialized:
+            port_handles, time_stamps, frame_numbers, tracking, tracking_quality = self.tracker.get_frame()
+            self.trackedTipTransform.SetMatrix(np.reshape(tracking[0], 16))
+            self.trackedTipTransform.Update()
+            self.ToolTxLCD.display(tracking[0][0, 3])
+            self.ToolTyLCD.display(tracking[0][1, 3])
+            self.ToolTzLCD.display(tracking[0][2, 3])
         # Full workflow (streaming, artifact removal, pose calculation)
         if self.isStreaming:
-            if self.isTrackerInitialized:
-                port_handles, time_stamps, frame_numbers, tracking, tracking_quality = self.tracker.get_frame()
-                self.trackedTipTransform.SetMatrix(np.reshape(tracking[0], 16))
-                self.trackedTipTransform.Update()
-
             # Read frame
             _, img_pre = self.fluoroStream.read()
             img_pre = cv2.cvtColor(img_pre, cv2.COLOR_BGR2RGB)
@@ -477,8 +483,7 @@ class DeepDecompositionViewer(QtWidgets.QMainWindow, Ui_MainWindow):
             self.fluoroCubeActor.SetUserTransform(self.fluoroCTRegTransform)
             self.ren.AddActor(self.fluoroCubeActor)
             #self.updateTimer.timeout.connect(self.updateScene)
-            self.updateTimer.timeout.connect(self.updateScene)
-            self.updateTimer.start(FRAME_INTERVAL_MS)
+
         else:
             self.isStreaming = False
             self.fluoroStream = None
